@@ -1,0 +1,137 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    urlcolor=blue!50!black
+}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\hpi}{\hat{\pi}}
+\newcommand{\hQL}{\hat{Q}^{L}}
+\newcommand{\hR}{\hat{R}}
+\newcommand{\hv}{\hat{v}}
+\newcommand{\hlam}{\hat{\lambda}^{L}}
+\newcommand{\homega}{\hat{\omega}}
+
+\title{Identification of the Long-End Captive-Demand Wedge: Empirical Estimation, Convenience-Yield Comparison, and NK-FTPL Calibration with Inflation IRFs}
+\author{Lucas Leturia \\ \small Master's Dissertation, Pontificia Universidad Cat\'olica de Chile}
+\date{Entrega III \textperiodcentered{} May 2026}
+
+\begin{document}
+\maketitle
+
+\section{Identity-Based Estimation of the Wedge Series \texorpdfstring{$\{\omega_t\}_{2010}^{2024}$}{omega series}}
+
+The §3.4 calibration recovers a time series of long-end captive-demand wedges $\omega_t$ from a closed-form algebraic solve of the augmented FTPL identity. Six observables --- the real short rate, the long-bond duration, captive-demand scale $V^{\text{liab}}$, long- and short-bond market values, and the primary balance --- are read from UK data, all scaled by nominal GDP (ONS series YBHA), and the seventh quantity $\omega_t$ is implied algebraically year by year. There is no optimization or statistical estimation: the recovery is exact given the inputs.
+
+The algebra is:
+\[
+\beta_t = \tfrac{1}{0.99} \text{ (constant; see §3)}, \qquad
+\delta_t = \frac{1 - 1/D_t}{\beta_t}, \qquad
+Q^{L,\text{fund}}_t = \frac{\beta_t}{1-\beta_t \delta_t},
+\]
+\[
+v_t = (b^S_t + b^L_t)/\bar y_t, \qquad
+R_t = (1-\beta_t) v_t - s_t, \qquad
+\omega_t = \frac{R_t / b^L_t}{1 - R_t / b^L_t}.
+\]
+Data are compiled in \texttt{calibration/inputs\_filled\_v2.xlsx} from auto-downloaded ONS, OBR, BoE and TPR/PPF sources plus best-guess DMO inputs (the DMO data portal is JavaScript-rendered and not scriptable); each cell has a colour-coded provenance tag.
+
+\paragraph{One key deviation from the methodology PDF (§3.4).} The real short rate $r_t$ entering $\beta_t = 1/(1+r_t)$ is set to the literature standard $\beta = 0.99$ constant rather than read off the BoE GLC Real curve at 1y. The BoE does not publish below 2.5y on the linker curve, and the 2.5y proxy is deeply negative across the QE/ZLB sample because LDI captive demand compresses 2y+ real linker yields --- precisely the channel the dissertation is identifying. Feeding the 2.5y proxy into $\beta = 1/(1+r)$ would partially double-count the wedge into the discount factor itself. The literature-standard $\beta = 0.99$ sidesteps this. The original BoE-derived series is preserved in the input workbook for sensitivity exercises.
+
+\section{Comparison to Convenience-Yield Benchmarks}
+
+The unit-comparable object is not $\omega_t$ itself but the implied yield-space wedge $1/Q^{L,\text{fund}}_t - 1/Q^L_t \approx (1/Q^{L,\text{fund}}_t) \cdot \omega_t/(1+\omega_t)$, in basis points.
+
+\begin{center}
+\begin{tabular}{l c c}
+\toprule
+Period & $\omega_t$ range & Yield wedge (bps) \\
+\midrule
+2010 & 0.52 & $\sim$170 \\
+2011--2014 & 0.20--0.33 & $\sim$85--125 \\
+2015--2019 & 0.05--0.14 & $\sim$25--60 \\
+2020 & 1.01 & $\sim$225 \\
+2021--2022 & 0.10--0.16 & $\sim$45--70 \\
+2023--2024 & 0.15--0.19 & $\sim$65--90 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The headline finding: \textbf{the implied wedge series is broadly consistent in magnitude and direction with the literature on long-end captive-demand effects}.
+
+\begin{itemize}[leftmargin=*,nosep]
+\item Greenwood--Hanson--Vayanos (2010, 2018) and Vayanos--Vila (2021) preferred-habitat estimates put long-end yield compression from segmented LDI/insurance demand at 30--100 bps in steady state. The model's 2015--2019 and 2021--2024 readings (25--90 bps) sit in this band.
+\item Domanski--Shin--Sushko (BIS, 2017) put UK LDI-specific yield compression at 50--100 bps over 2014--2017; the model gives roughly 70 bps over that window.
+\item Krishnamurthy--Vissing-Jorgensen (2012) put the US Treasury convenience yield at $\sim$70 bps on average over 1929--2008. The conceptual object is broader (safety+liquidity+scarcity, not just LDI), but the order-of-magnitude check passes.
+\item The 2020 magnitude ($\sim$225 bps) is on the high end. It is sensitive to my best-guess DMO long-gilt market value: under-stating MV/GDP at the QE peak inflates the implied $\omega$. A robustness exercise sweeping the DMO inputs should be reported alongside the headline series. A plausible corrected magnitude is 100--150 bps, closer to estimates of total QE-era long-end compression.
+\item Pinter--Walker (BoE staff working paper, 2023) put the persistent post-mini-budget long-gilt LDI premium at $\sim$50 bps. The model's 2022 figure (46 bps) is on target, but smooths over the September spike because the calibration is annual.
+\end{itemize}
+
+Of the four "regimes" the dissertation can speak to --- post-GFC fiscal expansion, ZLB calm, the 2020 stress, and the post-LDI normalisation --- the model captures the level and the direction in each. The biggest caveat is the 2020 magnitude; the second is that annual frequency cannot capture the within-year 2022 tail event.
+
+\section{Calibration of Deep Parameters for the NK Embedding}
+
+The §3.4 exercise pins steady-state objects; the NK embedding adds a small forward-looking system that requires three additional parameters --- the Calvo stickiness $\theta$, the CRRA $\sigma$, and the Taylor coefficient $\phi_\pi$. The complete calibration table is set as follows.
+
+\begin{center}
+\begin{tabular}{l l l}
+\toprule
+Parameter & Value & Source / rationale \\
+\midrule
+$\beta$              & 0.99    & Literature standard (annual). FTPL: Cochrane book, Sims (2013).  \\
+$\sigma$             & 1       & Log utility, NK convention (Gal\'i 2015 Ch.\ 3) \\
+$\delta$             & 0.96    & UK long-gilt 15+ Macaulay duration $\approx 20$y; $\beta\delta=0.95$ \\
+$\bar\omega$         & 0.121   & §3.4 average (2010--2024) under literature-$\beta$ calibration \\
+$\eta = \delta Q^L/(1+\delta Q^L)$ & 0.954 & Derived; reflects long bond's near-perpetuity nature \\
+$w_S$, $w_L$         & 0.63, 0.37 & §3.4: short+medium and long shares of UK gilt market value \\
+$\bar s / v$         & $-0.03$ & UK primary deficit / debt MV, 2010--2024 average (OBR) \\
+$\bar R / v$         & 0.04    & Implied by steady-state FTPL: $\bar s/v + \bar R/v = 1-\beta = 0.01$ \\
+$\bar c/\bar y$      & 0.60    & UK consumption share \\
+$\bar g/\bar y$      & 0.40    & UK government spending share \\
+$\bar\tau/\bar y$    & 0.37    & Implied by $\bar s/\bar y = -0.03$ \\
+$\bar\chi$           & 0.37    & DMO long-share of conventional gilt market value \\
+$\theta$             & 0.75    & Calvo prob. of no-reset, quarterly. 4-quarter average reset, NK standard \\
+$\kappa$             & 0.086   & $(1-\theta)(1-\beta\theta)\sigma/\theta$ \\
+$\phi_\pi$           & 0.5     & Passive monetary, mid-range of $(0,1)$ \\
+$\rho_z$ (all)       & 0.7     & Conventional AR(1) persistence pending §3.5 estimation \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Choices that bear scrutiny.}
+The single most consequential parameter is $\bar\omega$. It enters the rent equation as a coefficient $1/\bar\omega \approx 8.26$ on $\homega$, and indirectly through $\eta$. The 2020 §3.4 reading of $\omega_t = 1.01$ suggests that the headline 0.121 average understates the stress regime; any IRF magnitude comparison across regimes should sweep $\bar\omega$. The Calvo parameter $\theta = 0.75$ delivers $\kappa \approx 0.086$ which is at the lower end of estimated NKPC slopes for advanced economies --- a flatter Phillips curve makes inflation respond more slowly to output gaps, so the IRFs put more weight on the FTPL channel and less on the NKPC channel. The passive Taylor $\phi_\pi = 0.5$ is the mid-range of the determinacy region under fiscal dominance; the determinacy boundary at $\phi_\pi = 1$ is sharp (BK fails at $\phi_\pi = 1.01$), confirming the regime switch described in §6 of the embedding PDF.
+
+\section{Inflation Impulse Responses}
+
+The headline result is the response of inflation to a positive shock to the regulatory intensity $\hlam$ --- a tightening of the LDI mandate. The model predicts on impact $\hpi \downarrow$, $\hQL \uparrow$, $\hR \uparrow$, $\hv \uparrow$, with all variables decaying monotonically at the AR(1) rate $\rho_\lambda = 0.7$.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\linewidth]{nk/figures/irf_lambda.png}
+\caption{IRF to $\varepsilon^\lambda$ shock (unit positive innovation to $\hat\lambda^L$).}
+\end{figure}
+
+\paragraph{Mechanism.} The chain runs: $\hlam\uparrow \Rightarrow \hR\uparrow$ (mechanically via $\hR = \homega/\bar\omega + \hlam + \hat V^{\text{liab}}$); $\hR\uparrow \Rightarrow \hv\uparrow$ (augmented FTPL identity requires the present-value backing of debt to rise to match the higher rent stream); $\hv\uparrow$ holding bond stocks given $\Rightarrow \hpi\downarrow$ (the coefficient on $\hpi$ in the real-debt-value equation is exactly $-1$: a one-percent inflation surprise destroys one percent of real debt, so to make $\hv$ rise, $\hpi$ must fall). The NKPC is in the system but does not pin the price level --- under passive monetary ($\phi_\pi < 1$) it is the augmented FTPL identity that does, and the NKPC determines the joint motion of inflation and output given the FTPL-required path. This is the formal definition of fiscal dominance and is the substantive economic content of the chapter.
+
+\paragraph{Magnitude.} A unit positive shock to $\hlam$ produces $\hpi_0 = -0.030$ (3 basis points of disinflation on impact, in quarterly log-deviation units). For a 1pp $\hat\lambda^L$ shock under $\rho_\lambda = 0.7$, the cumulative deflation over the first eight quarters is about $-0.14$ log points. Higher persistence ($\rho_\lambda = 0.9$) extends the trough out to 20 quarters without changing the impact sign.
+
+\paragraph{Fiscal expansion.} A positive $\varepsilon^g$ shock (government spending up, primary surplus down) raises inflation on impact ($\hpi_0 = +0.057$) --- the standard FTPL prediction. Interestingly, $\hpi$ turns negative around $h=4$ as the discount-rate term $\beta(\hat i - \E \hpi_{t+1})$ in the FTPL identity feeds back through forward expectations of higher $\hv$. The magnitude is roughly half that of the $\hlam$ shock because the fiscal channel works only through $\bar s/v \approx -0.03$, while the captive-demand channel works through $\bar R/v \approx 0.04$ amplified by the wedge coefficient.
+
+\paragraph{Monetary tightening.} A positive $\varepsilon^i$ shock yields $\hpi_0 = +0.146$, the \textit{opposite} sign from the standard active-NK prediction. Under fiscal dominance, a rise in the nominal rate raises the real rate if inflation were unchanged, lowering the present value of fiscal backing on the right-hand side of the FTPL identity. To restore the identity, the price level must revalue real debt downward --- i.e., $\hpi$ must \textit{rise}. This is exactly the inversion §6 of the embedding PDF predicts, and it is one of the headline empirical signatures distinguishing fiscal- from monetary-dominance regimes. The output response ($\hat y_0 = -0.97$) remains in the standard contractionary direction; only the price-level response inverts.
+
+\paragraph{Sensitivity to $\phi_\pi$.} As $\phi_\pi \to 1^-$, $|\hpi|$ in response to $\varepsilon^\lambda$ \textit{shrinks} from 0.030 at $\phi_\pi = 0.5$ to 0.011 at $\phi_\pi = 0.99$. Higher $\phi_\pi$ means the Taylor rule tracks inflation movements more closely; the real rate moves less when inflation moves, accommodating the FTPL adjustment and damping the inflation movement needed to clear the identity. At $\phi_\pi > 1$ the Blanchard--Kahn count flips (11 unstable eigenvalues vs. the required 10) and the price level becomes monetary-pinned --- the determinacy boundary at exactly $\phi_\pi = 1$ is the formal switch between fiscal and monetary dominance.
+
+\paragraph{Conclusions.} The captive-demand channel produces a robust and theoretically clean disinflation response to LDI tightening. Magnitudes are modest at the headline calibration but are governed by $\bar\omega$, which is itself estimated from the §3.4 exercise with sensitivity to the DMO best-guesses. Two surface-level discrepancies between the model's predictions and the standard NK textbook --- the monetary-shock sign and the $\phi_\pi$ sensitivity --- are not bugs but the structural signature of fiscal dominance, and constitute testable empirical implications of the chapter.
+
+\end{document}

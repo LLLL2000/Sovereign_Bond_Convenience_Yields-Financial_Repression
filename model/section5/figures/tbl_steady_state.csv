@@ -1,0 +1,11 @@
+,symbol,name,source,value
+0,v̄,Real debt market value / GDP,Central Govt debt MV (Millennium A1 col 77) / Nominal GDP (col 23/24),1.0692619855831742
+1,s̄/ȳ,Primary balance / GDP,Public Sector Net Borrowing (col 71) / Nominal GDP — note: includes interest,-0.03562263810441379
+2,s̄/v̄,Primary balance / debt MV,(Public Sector Net Borrowing) / Central Govt debt MV,-0.03331516371545299
+3,"w_S, w_L",Short+medium and long shares of debt MV,DMO Annual Review 2024-25 (Section 3.4 inheritance),
+4,χ̄,Long-bond share of net issuance,DMO Annual Review (long share of conventional gilts),
+5,b̄^L / ȳ,Long-bucket gilt MV / GDP,DMO (15+ bucket) × proportionality — Section 3.4 best-guess,0.18
+6,b̄^S / ȳ,Short+medium gilt MV / GDP,DMO 0-15y bucket / GDP,0.37
+7,λ̄^L V̄^liab / ȳ,Captive-demand pool / GDP,"PPF Purple Book s179 DB liabilities + BoE Insurance Aggregate technical provisions, averaged over 2015-2019",
+8,ω̄,Long-end captive-demand wedge,§3.4 sample average 2010-2024 (literature-β calibration): ω̄ = 0.121,0.121
+9,R̄/v̄,Rent / debt MV,Implied by FTPL steady state: 1 - β - s̄/v̄ = 0.04,0.04
